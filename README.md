@@ -13,3 +13,6 @@ Mașina se oprește cu accept (True) dacă toate caracterele au fost potrivite �
 
 
 nfa:Acest program citește definiția unui NFA dintr-un fișier text nfa.txt și o listă de șiruri de test dintr-un alt fișier inputuri.txt. Apoi, simulează funcționarea NFA-ului pentru fiecare șir și afișează dacă acesta este acceptat sau respins. Conditia ca un sir sa fie acceptat este sa aiba un numar impar de 1.
+
+
+matrice: Primeste o matrice pe care o salveaza si o afiseaza in fisierul matrice.out.
