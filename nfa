@@ -1,0 +1,101 @@
+def calculeaza_epsilon_closure(tranzitii, stari_initiale):
+    stari_de_explorat = list(stari_initiale)
+    inchidere = set(stari_initiale)
+
+    while stari_de_explorat:
+        stare_curenta = stari_de_explorat.pop()
+        urmatoarele_stari = tranzitii.get((stare_curenta, ''), set())
+        for urmatoarea_stare in urmatoarele_stari:
+            if urmatoarea_stare not in inchidere:
+                inchidere.add(urmatoarea_stare)
+                stari_de_explorat.append(urmatoarea_stare)
+
+    return inchidere
+
+def calculeaza_move(tranzitii, stari_curente, simbol):
+    stari_noi = set()
+    for stare in stari_curente:
+        stari_posibile = tranzitii.get((stare, simbol), set())
+        stari_noi.update(stari_posibile)
+    return stari_noi
+
+def verifica_acceptare(nfa, sir):
+    stari_curente = calculeaza_epsilon_closure(nfa['transitions'], {nfa['start_state']})
+
+    for caracter in sir:
+        if caracter not in nfa['alphabet']:
+            return False
+
+        stari_dupa_move = calculeaza_move(nfa['transitions'], stari_curente, caracter)
+        stari_curente = calculeaza_epsilon_closure(nfa['transitions'], stari_dupa_move)
+
+    for stare in stari_curente:
+        if stare in nfa['accept_states']:
+            return True
+    return False
+
+def citeste_nfa_din_fisier(nume_fisier):
+    with open(nume_fisier, 'r') as f:
+        linii = [linie.strip() for linie in f if linie.strip() and not linie.startswith('#')]
+
+    states = set()
+    alphabet = set()
+    start_state = None
+    accept_states = set()
+    transitions = {}
+
+    i = 0
+    while i < len(linii):
+        linie = linii[i]
+        if linie.startswith("states:"):
+            parts = linie.split(":")
+            states = set(part.strip() for part in parts[1].split(","))
+        elif linie.startswith("alphabet:"):
+            parts = linie.split(":")
+            alphabet = set(part.strip() for part in parts[1].split(","))
+        elif linie.startswith("start_state:"):
+            start_state = linie.split(":")[1].strip()
+        elif linie.startswith("accept_states:"):
+            parts = linie.split(":")
+            accept_states = set(part.strip() for part in parts[1].split(","))
+        elif linie.startswith("transitions:"):
+            i += 1
+            while i < len(linii) and '->' in linii[i]:
+                tranzitie = linii[i]
+                stanga, dreapta = tranzitie.split("->")
+                stanga = stanga.strip()
+                dreapta = dreapta.strip()
+                stare_curenta, simbol = [x.strip() for x in stanga.split(",")]
+
+                if (stare_curenta, simbol) not in transitions:
+                    transitions[(stare_curenta, simbol)] = set()
+                transitions[(stare_curenta, simbol)].add(dreapta)
+                i += 1
+            continue
+        i += 1
+
+    return {
+        'states': states,
+        'alphabet': alphabet,
+        'start_state': start_state,
+        'accept_states': accept_states,
+        'transitions': transitions
+    }
+
+def citeste_inputuri_din_fisier(nume_fisier):
+    with open(nume_fisier, 'r') as f:
+        siruri = [linie.strip() for linie in f if linie.strip()]
+    return siruri
+
+def main():
+    nfa = citeste_nfa_din_fisier("nfa.txt")
+    siruri_de_test = citeste_inputuri_din_fisier("inputuri.txt")
+
+    for sir in siruri_de_test:
+        if verifica_acceptare(nfa, sir):
+            print(f"{sir} -> ACCEPTAT")
+        else:
+            print(f"{sir} -> RESPINS")
+
+if __name__ == "__main__":
+    main()
