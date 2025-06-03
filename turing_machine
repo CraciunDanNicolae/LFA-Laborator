@@ -1,0 +1,61 @@
+def is_palindrome_turing_marked(tape_input, debug=False):
+    tape = list(tape_input) + ['_']
+    head = 0
+    state = 'START'
+    saved_char = None
+
+    while True:
+        if debug:
+            print(f"[{state}] HEAD={head}, TAPE={''.join(tape)}")
+
+        if state == 'START':
+            # Găsește primul caracter neprocesat
+            while head < len(tape) and tape[head] == 'X':
+                head += 1
+
+            if tape[head] == '_':
+                return True  # Toate caracterele au fost verificate
+
+            saved_char = tape[head]
+            tape[head] = 'X'
+            state = 'MOVE_RIGHT'
+            head += 1
+
+        elif state == 'MOVE_RIGHT':
+            while tape[head] != '_':
+                head += 1
+            head -= 1
+            state = 'CHECK_MATCH'
+
+        elif state == 'CHECK_MATCH':
+            while tape[head] == 'X':
+                head -= 1
+                if head < 0:
+                    return False  # Eroare: nimic de comparat
+
+            if tape[head] != saved_char:
+                return False  # Case-sensitive: 'c' ≠ 'C'
+
+            tape[head] = 'X'
+            state = 'MOVE_LEFT'
+            head -= 1
+
+        elif state == 'MOVE_LEFT':
+            while head >= 0 and tape[head] != '_':
+                head -= 1
+            head += 1
+            state = 'START'
+
+def read_lines_from_file(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        return [line.rstrip('\n') for line in f]
+
+
+lines = read_lines_from_file("input.txt")
+
+for line in lines:
+    if not line.strip():
+        print("NU este palindrom")
+        continue
+    result = is_palindrome_turing_marked(line, debug=False)
+    print("Palindrom" if result else "NU este palindrom")
