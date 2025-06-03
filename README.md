@@ -8,3 +8,8 @@ MOVE_RIGHT: avansează până la capătul șirului pentru a găsi caracterul de 
 CHECK_MATCH: compară caracterul salvat cu ultimul caracter nemarcat.
 MOVE_LEFT: se întoarce spre începutul benzii pentru a relua procesul.
 Mașina se oprește cu accept (True) dacă toate caracterele au fost potrivite și marcate.
+
+
+
+
+nfa:Acest program citește definiția unui NFA dintr-un fișier text nfa.txt și o listă de șiruri de test dintr-un alt fișier inputuri.txt. Apoi, simulează funcționarea NFA-ului pentru fiecare șir și afișează dacă acesta este acceptat sau respins. Conditia ca un sir sa fie acceptat este sa aiba un numar impar de 1.
