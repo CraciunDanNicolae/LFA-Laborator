@@ -70,6 +70,6 @@ def emulator(fisier,fisier1):
     else:
         return 0
     
-print(Obtine("lab1.txt"))
-print(emulator("test.txt","lab1.txt"))
+print(Obtine("dfa.txt"))
+print(emulator("test.txt","dfa.txt"))
 
